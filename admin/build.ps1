@@ -30,23 +30,9 @@ Function clearIvyCache() {
 & cmd /c 'java -version' '2>&1'
 checkExit
 
-if ($env:APPVEYOR_FORCED_BUILD -eq 'true') {
-  ensureVersion
-  clearIvyCache
-  if ($env:mode -eq 'release') {
-    echo "Running a release for $env:version"
-    $repositoriesFile="$env:APPVEYOR_BUILD_FOLDER\conf\repositories"
-    & cmd /c "sbt ""-Dsbt.override.build.repos=true"" ""-Dsbt.repository.config=$repositoriesFile"" ""-Dproject.version=$env:version"" ""show fullResolvers"" clean update ghUpload" '2>&1'
-    checkExit
-  } else {
-    echo "Unknown mode: '$env:mode'"
-    Exit 1
-  }
-} else {
-  $env:version="2.13.6"
-  clearIvyCache
-  # By default, test building the packages (but don't uplaod)
-  # Need to redirect stderr, otherwise any error output (like jvm warning) fails the build (ErrorActionPreference)
-  & cmd /c "sbt ""-Dproject.version=$env:version"" ""show s3Upload/mappings""" '2>&1'
-  checkExit
-}
+clearIvyCache
+$env:version="2.13.16"
+echo "Running a release for $env:version"
+$repositoriesFile="$env:APPVEYOR_BUILD_FOLDER\conf\repositories"
+& cmd /c "sbt ""-Dsbt.override.build.repos=true"" ""-Dsbt.repository.config=$repositoriesFile"" ""-Dproject.version=$env:version"" ""show fullResolvers"" clean update ghUpload" '2>&1'
+checkExit

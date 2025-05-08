@@ -40,17 +40,7 @@ env:
     - secure: "KetupmuH5L7nJjouavdPpvuc7imL9T01zI/OdTYhzOmuTSHV8tP6TVykRcVl73ZBkEre+Es7TYw46HjlhTqGtj//6V+8XCNZ4hIt1IYEA2v+IBmIBCtuVnZdlY09/DqM8vxZjhnLFhjQlTvkCZdzc1lfzN1AVtceUvKqJpnzGS0="
 script:
   - source scripts/common
-  - postCommitStatus "pending"
   - admin/build.sh
-
-after_script:
-  - |
-    if [[ "$TRAVIS_TEST_RESULT" == "0" ]]; then
-      local state="success"
-    else
-      local state="failure"
-    fi
-    postCommitStatus $state
 
 cache:
   directories:

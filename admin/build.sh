@@ -78,34 +78,12 @@ clearIvyCache() {
   if [ -d $HOME/.sbt ]; then find $HOME/.sbt -name "*compiler-interface*$version*" | xargs rm -rfv; fi
 }
 
-if [[ "$TRAVIS_EVENT_TYPE" == "api" ]]; then
-  ensureVersion
-  clearIvyCache
-  if [[ "$mode" == "archives" ]]; then
-    echo "Running 'archives' for $version"
-    setupSSH
-    . scripts/jobs/release/website/archives
-  elif [[ "$mode" == "update-api" ]]; then
-    echo "Running 'update-api' for $version"
-    setupSSH
-    . scripts/jobs/release/website/update-api
-  elif [[ "$mode" == "release" ]]; then
-    echo "Running a release for $version"
-    triggerMsiRelease
-    repositoriesFile="$TRAVIS_BUILD_DIR/conf/repositories"
-    # The log is too long for the travis UI, so remove ANSI codes to have a clean raw version
-    sbt -Dsbt.log.noformat=true \
-      -Dsbt.override.build.repos=true -Dsbt.repository.config="$repositoriesFile" \
-      -Dproject.version=$version \
-      "show fullResolvers" clean update ghUpload
-    triggerSmoketest
-  else
-    echo "Unknown build mode: '$mode'"
-    exit 1
-  fi
-else
-  version="2.13.6"
-  clearIvyCache
-  # By default, test building the packages (but don't uplaod)
-  sbt -Dproject.version=$version "show s3Upload/mappings"
-fi
+clearIvyCache
+version="2.13.16"
+echo "Running a release for $version"
+repositoriesFile="$TRAVIS_BUILD_DIR/conf/repositories"
+# The log is too long for the travis UI, so remove ANSI codes to have a clean raw version
+sbt -Dsbt.log.noformat=true \
+  -Dsbt.override.build.repos=true -Dsbt.repository.config="$repositoriesFile" \
+  -Dproject.version=$version \
+  "show fullResolvers" clean update ghUpload

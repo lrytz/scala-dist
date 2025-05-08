@@ -35,20 +35,20 @@ object ScalaDist {
       Wix.settings :+ (s3Upload / mappings += uploadMapping(Windows / packageBin).value)
     else Unix.settings ++ Seq(
       s3Upload / mappings += uploadMapping(Universal / packageBin).value,
-      s3Upload / mappings += uploadMapping(Universal / packageZipTarball).value,
-      s3Upload / mappings += uploadMapping(UniversalDocs / packageBin).value,
-      s3Upload / mappings += uploadMapping(UniversalDocs / packageZipTarball).value,
-      s3Upload / mappings += uploadMapping(UniversalDocs / packageXzTarball).value,
-       s3Upload / mappings += uploadMapping(Rpm / packageBin).value,
+//      s3Upload / mappings += uploadMapping(Universal / packageZipTarball).value,
+//      s3Upload / mappings += uploadMapping(UniversalDocs / packageBin).value,
+//      s3Upload / mappings += uploadMapping(UniversalDocs / packageZipTarball).value,
+//      s3Upload / mappings += uploadMapping(UniversalDocs / packageXzTarball).value,
+//       s3Upload / mappings += uploadMapping(Rpm / packageBin).value,
       // Debian needs special handling because the value sbt-native-packager
       // gives us for `Debian / packageBin` (coming from the archiveFilename
       // method) includes the debian version and arch information,
       // which we historically have not included.  I don't see a way to
       // override the filename on disk, so we re-map at upload time
-      s3Upload / mappings += Def.task {
-        (Debian / packageBin).value ->
-          s"scala/${version.value}/${(Debian / name).value}-${version.value}.deb"
-      }.value
+//      s3Upload / mappings += Def.task {
+//        (Debian / packageBin).value ->
+//          s"scala/${version.value}/${(Debian / name).value}-${version.value}.deb"
+//      }.value
     )
 
   def settings: Seq[Setting[_]] =
